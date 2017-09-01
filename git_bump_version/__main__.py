@@ -34,9 +34,10 @@ def get_last_version_tag(repo, match):
 
   return found, last_version
 
-def increment_build_number(version):
+def increment_build_number(prefix, version):
+  version = version.replace(prefix, "") 
   major, minor, build = version.split('.')
-  new_version = "{}.{}.{}".format(int(major), int(minor), int(build) + 1)
+  new_version = "{}{}.{}.{}".format(prefix, int(major), int(minor), int(build) + 1)
   return new_version
 
 def add_git_tag(repo, tag):
@@ -55,19 +56,17 @@ def main():
     return errno.EEXIST
 
   major, minor = get_major_minor_from_branch(repo, args.branch_prefix)
-  found, new_version = get_last_version_tag(repo, "{}.{}".format(major, minor))
+  found, new_version = get_last_version_tag(repo, "{}{}.{}".format(args.version_prefix, major, minor))
 
   if found:
-    new_version = increment_build_number(new_version)
+    new_version = increment_build_number(args.version_prefix, new_version)
   else:
-    new_version = "{}.{}.0".format(major, minor)
-
-  new_version_tag = args.version_prefix + new_version
+    new_version = "{}{}.{}.0".format(args.version_prefix, major, minor)
 
   if not args.dont_tag:
-    add_git_tag(repo, new_version_tag)
+    add_git_tag(repo, new_version)
 
-  print(new_version_tag)
+  print(new_version)
   return 0
 
 if __name__ == "__main__":
