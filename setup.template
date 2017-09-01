@@ -6,8 +6,8 @@ setup(
   description = 'Automatically bumps version based on last tag and current branch',
   author = 'Nathan Grubb',
   author_email = 'mrnathangrubb@gmail.com',
-  url = 'https://github.com/silent-snowman/git-bump-version',
-  download_url = 'https://github.com/silent-snowman/git-bump-version/archive/${version}.tar.gz',
+  url = '${repo}',
+  download_url = '${repo}/archive/${version}.tar.gz',
   keywords = ['git', 'tag', 'version'],
   classifiers = [],
   entry_points={
