@@ -24,5 +24,6 @@ git add setup.py
 git commit -m "Update setup.py for ${version}"
 git push -u origin
 git_bump_version
-python setup.py sdist upload -r $1 
+python setup.py sdist 
+twine upload dist/git_bump_version-${version}.tar.gz
 exit 0
