@@ -51,8 +51,8 @@ def main():
   args = parser.parse_args()
   repo = Repo(os.getcwd())
 
-  #if is_head_tagged(repo):
-  #  return errno.EEXIST
+  if is_head_tagged(repo):
+    return errno.EEXIST
 
   major, minor = get_major_minor_from_branch(repo, args.branch_prefix)
   match = "{}{}.{}.*".format(args.version_prefix, major, minor)
