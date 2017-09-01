@@ -25,8 +25,7 @@ def get_last_version_tag(repo, match):
   last_version = None
 
   try:
-    match_expr="{}.*".format(match)
-    last_version = repo.git.describe(['--tags', '--match={}'.format(match_expr), '--abbrev=0'])
+    last_version = repo.git.describe(['--tags', '--match={}'.format(match), '--abbrev=0'])
     found = True
   except GitCommandError as gce:
     #no tag found
@@ -35,7 +34,7 @@ def get_last_version_tag(repo, match):
   return found, last_version
 
 def increment_build_number(prefix, version):
-  version = version.replace(prefix, "") 
+  version = version.replace(prefix, "")
   major, minor, build = version.split('.')
   new_version = "{}{}.{}.{}".format(prefix, int(major), int(minor), int(build) + 1)
   return new_version
@@ -52,11 +51,12 @@ def main():
   args = parser.parse_args()
   repo = Repo(os.getcwd())
 
-  if is_head_tagged(repo):
-    return errno.EEXIST
+  #if is_head_tagged(repo):
+  #  return errno.EEXIST
 
   major, minor = get_major_minor_from_branch(repo, args.branch_prefix)
-  found, new_version = get_last_version_tag(repo, "{}{}.{}".format(args.version_prefix, major, minor))
+  match = "{}{}.{}.*".format(args.version_prefix, major, minor)
+  found, new_version = get_last_version_tag(repo, match)
 
   if found:
     new_version = increment_build_number(args.version_prefix, new_version)
