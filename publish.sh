@@ -7,7 +7,7 @@ repo="https://github.com/silent-snowman/git_bump_version"
 package_name=git_bump_version
 version=$(git_bump_version --dont_tag)
 
-if [ $? ]; then
+if [[ $? -ne 0 ]]; then
   echo "Nothing to publish"
   exit 1
 else
