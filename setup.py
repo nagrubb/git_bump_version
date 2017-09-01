@@ -2,12 +2,12 @@ from distutils.core import setup
 setup(
   name = 'git_bump_version',
   packages = ['git_bump_version'], # this must be the same as the name above
-  version = '',
+  version = '0.1.2',
   description = 'Automatically bumps version based on last tag and current branch',
   author = 'Nathan Grubb',
   author_email = 'mrnathangrubb@gmail.com',
   url = 'https://github.com/silent-snowman/git-bump-version',
-  download_url = 'https://github.com/silent-snowman/git-bump-version/archive/.tar.gz',
+  download_url = 'https://github.com/silent-snowman/git-bump-version/archive/0.1.2.tar.gz',
   keywords = ['git', 'tag', 'version'],
   classifiers = [],
   entry_points={
