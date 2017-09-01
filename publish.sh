@@ -4,7 +4,7 @@ render_template() {
 }
 
 package_name=git_bump_version
-version=$(`git_bump_version --dont_tag`)
+version=$(git_bump_version --dont_tag)
 
 if [ "$version" = "None" ]; then
   echo "Nothing to publish"
@@ -19,3 +19,4 @@ git commit -m "Update setup.py for ${version}"
 git push -u origin
 git_bump_version
 python setup.py sdist upload -r pypitest
+exit 0

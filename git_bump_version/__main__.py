@@ -66,6 +66,7 @@ def main():
 
   if not args.dont_tag:
     add_git_tag(repo, new_version_tag)
+
   print(new_version_tag)
   return 0
 
