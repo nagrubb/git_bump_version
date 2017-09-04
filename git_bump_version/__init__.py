@@ -110,7 +110,7 @@ def main(args=None):
   matched, major, minor = get_major_minor_from_branch(repo, args.branch_regex)
 
   if not matched:
-    print_error('Could not parse major and minor from branch: {} using regex: {}'.format(repo.branch_name, args.branch_regex))
+    print_error('Could not parse major and minor from branch: "{}" using regex: "{}"'.format(repo.branch_name, args.branch_regex))
     return errno.EINVAL
 
   match = "{}{}.{}.*".format(args.version_prefix, major, minor)
