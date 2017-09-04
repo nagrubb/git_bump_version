@@ -1,13 +1,23 @@
 # git_bump_version
-This is a simple tool for automated versioning with Git. It assumes you follows a versioning scheme branch_prefix&lt;major.minor&gt; and use git tags in "&lt;version_prefix&gt;&lt;major&gt;.&lt;minor&gt;.&lt;build&gt;" scheme for releases. For instance say my branch structure looks something like this:
+This is a simple tool for automated versioning with Git. It assumes you follows a versioning scheme branch_prefix&lt;major.minor&gt; and use git tags in "&lt;version_prefix&gt;&lt;major&gt;.&lt;minor&gt;.&lt;build&gt;" scheme for releases. For instance here's an example branch structure looks something like this:
 
 ```
 * release/1.0
+release/1.5
 release/2.0
-release/3.0
 ```
 
-While currently on release/1.0 with the latest tag being 1.0.5. If you run `git_bump_version`, it will tag the local and remote HEAD commit with `1.0.6` as well as output `1.0.6` to stdout. Alternatively, you can run `git_bump_version --dont_tag` to just output `1.0.6` and perform the tag yourself. The default branch prefix is "release/" and the default version prefix is empty though these can be customized via command line options.
+Then some example tags for the above branch structure:
+
+```
+1.0.0
+1.0.1
+1.0.2
+1.5.0
+2.0.0
+```
+
+While currently on release/1.0 with the latest tag being `1.0.2` as seen above. If you run `git_bump_version` without the HEAD commit being tagged, it will tag the local and remote HEAD commit with `1.0.3` as well as output `1.0.3` to stdout. Alternatively, you can run `git_bump_version --dont_tag` to just output `1.0.3` without doing any tagging. The default branch prefix is "release/" and the default version prefix is empty though these can be customized via command line options (i.e. a common version prefix is "`v`" resulting in versions like `v1.0.0`).
 
 ## Install
 Installs like a regular PyPI package.
