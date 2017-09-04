@@ -7,7 +7,15 @@ from git.exc import GitCommandError
 
 class GitRepository:
   def __init__(self, directory):
-    self._repo = Repo(directory)
+    self._directory = directory
+    self._lazy_repo = None
+
+  @property
+  def _repo(self):
+    if not self._lazy_repo:
+      self._lazy_repo = Repo(self._directory)
+
+    return self._lazy_repo
 
   @property
   def head_commit(self):
@@ -45,8 +53,6 @@ class GitRepository:
   def create_remote_tag(self, tag, remote="origin"):
     self._repo.git.push([remote, tag])
 
-from . import GitRepository
-
 def get_major_minor_from_branch(repo, branch_prefix):
   version = repo.branch_name.replace(branch_prefix, "")
   major, minor = version.split('.')
@@ -70,7 +76,7 @@ def main(args):
   args = parser.parse_args(args)
   repo = GitRepository(os.getcwd())
 
-  if repo.is_head_tagged(repo):
+  if repo.is_head_tagged():
     return errno.EEXIST
 
   major, minor = get_major_minor_from_branch(repo, args.branch_prefix)

@@ -12,7 +12,7 @@ setup(
   classifiers = [],
   entry_points={
     'console_scripts' : [
-      '${package_name} = ${package_name}.__main__:main'
+      '${package_name} = ${package_name}.__init__:main'
     ]},
   install_requires=[
     'GitPython',
