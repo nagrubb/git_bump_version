@@ -1,9 +1,10 @@
 import os
+import six
 import sys
 import errno
 import argparse
 from git import Repo
-from git.exc import GitCommandError
+from git.exc import GitCommandError, InvalidGitRepositoryError
 
 class GitRepository:
   def __init__(self, directory):
@@ -16,6 +17,14 @@ class GitRepository:
       self._lazy_repo = Repo(self._directory)
 
     return self._lazy_repo
+
+  @property
+  def valid(self):
+    try:
+      self._repo.git.status()
+      return True
+    except InvalidGitRepositoryError:
+      return False
 
   @property
   def head_commit(self):
@@ -68,6 +77,9 @@ def add_git_tag(repo, tag):
   repo.create_local_tag(tag)
   repo.create_remote_tag(tag)
 
+def print_error(error):
+  six.print_(error, file=sys.stderr)
+
 def main(args):
   parser = argparse.ArgumentParser(prog='git_bump_version', description='Automatically add new version tag to git based on branch and last tag.')
   parser.add_argument('-bp', '--branch_prefix', default='release/', help='Prefix to the branch before major and minor version')
@@ -76,7 +88,12 @@ def main(args):
   args = parser.parse_args(args)
   repo = GitRepository(os.getcwd())
 
+  if not repo.valid:
+    print_error('This tool must be run inside a valid Git repository!')
+    return errno.EINVAL
+
   if repo.is_head_tagged():
+    print_error('Head already tagged!')
     return errno.EEXIST
 
   major, minor = get_major_minor_from_branch(repo, args.branch_prefix)
