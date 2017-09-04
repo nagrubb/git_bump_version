@@ -1,4 +1,5 @@
 import os
+import re
 import six
 import sys
 import errno
@@ -62,10 +63,14 @@ class GitRepository:
   def create_remote_tag(self, tag, remote="origin"):
     self._repo.git.push([remote, tag])
 
-def get_major_minor_from_branch(repo, branch_prefix):
-  version = repo.branch_name.replace(branch_prefix, "")
-  major, minor = version.split('.')
-  return int(major), int(minor)
+def get_major_minor_from_branch(repo, regex):
+  match = re.search(regex, repo.branch_name)
+
+  if len(match.groups()) != 2:
+    return False, None, None
+
+  major, minor = int(match.group('major')), int(match.group('minor'))
+  return True, major, minor
 
 def increment_build_number(prefix, version):
   version = version.replace(prefix, "")
@@ -82,7 +87,7 @@ def print_error(error):
 
 def main(args):
   parser = argparse.ArgumentParser(prog='git_bump_version', description='Automatically add new version tag to git based on branch and last tag.')
-  parser.add_argument('-bp', '--branch_prefix', default='release/', help='Prefix to the branch before major and minor version')
+  parser.add_argument('-bp', '--branch_regex', default='(?P<major>\d+)\.(?P<minor>\d+)$', help='Regex to match major and minor versions from branch')
   parser.add_argument('-vp', '--version_prefix', default='', help='Version prefix (i.e. "v" would make "1.0.0" into "v1.0.0")')
   parser.add_argument('-dt', '--dont_tag', action='store_true', help='Do not actually tag the repository')
   args = parser.parse_args(args)
@@ -96,7 +101,13 @@ def main(args):
     print_error('Head already tagged!')
     return errno.EEXIST
 
-  major, minor = get_major_minor_from_branch(repo, args.branch_prefix)
+  matched, major, minor = get_major_minor_from_branch(repo, args.branch_regex)
+
+  if not matched:
+    #todo test this
+    print_error('Could not parse major and minor from branch: {}'.format(repo.branch_name))
+    return errno.EINVAL
+
   match = "{}{}.{}.*".format(args.version_prefix, major, minor)
   found, new_version = repo.find_tag(match)
 

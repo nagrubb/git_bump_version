@@ -124,18 +124,19 @@ class TestMain():
     self.verify_expected_tag(expected_tag, should_tag=False)
     assert result is 0, 'return code should have been 0'
 
-  def test_bump_version_custom_branch_prefix(self):
-    branch_prefix = self.gen_word()
-    branch_name, latest_tag, expected_tag, _ = self.gen_random_parameters(branch_prefix=branch_prefix)
-    self.configure_git_repo_mock(branch_name=branch_name, tag_found=True, latest_tag=latest_tag)
-    result = git_bump_version.main(['--branch_prefix', branch_prefix])
+  def test_bump_version_custom_branch_regex(self):
+    branch_regex = '^(?P<major>\d+)\.(?P<minor>\d+)'
+    branch_name = '1.0/release'
+    expected_tag = '1.0.0'
+    self.configure_git_repo_mock(branch_name=branch_name, tag_found=False)
+    result = git_bump_version.main(['--branch_regex', branch_regex])
     self.verify_expected_tag(expected_tag)
     assert result is 0, 'return code should have been 0'
 
   def test_bump_version_custom_version_prefix(self):
     version_prefix = self.gen_word()
     branch_name, latest_tag, expected_tag, _ = self.gen_random_parameters(version_prefix=version_prefix)
-    self.configure_git_repo_mock(branch_name='release/1.10', tag_found=True, latest_tag=latest_tag)
+    self.configure_git_repo_mock(branch_name=branch_name, tag_found=True, latest_tag=latest_tag)
     result = git_bump_version.main(['--version_prefix', version_prefix])
     self.verify_expected_tag(expected_tag)
     assert result is 0, 'return code should have been 0'
@@ -148,11 +149,12 @@ class TestMain():
     self.verify_expected_tag(expected_tag)
     assert result is 0, 'return code should have been 0'
 
-  def test_bump_version_custom_branch_version_prefix(self):
+  def test_bump_version_custom_branch_regex_version_prefix(self):
+    branch_regex = '^(?P<major>\d+)\.(?P<minor>\d+)'
+    branch_name = '8.5/release'
     version_prefix = self.gen_word()
-    branch_prefix = self.gen_word()
-    branch_name, latest_tag, expected_tag, _ = self.gen_random_parameters(branch_prefix=branch_prefix, version_prefix=version_prefix)
-    self.configure_git_repo_mock(branch_name=branch_name, tag_found=True, latest_tag=latest_tag)
-    result = git_bump_version.main(['--version_prefix', version_prefix, '--branch_prefix', branch_prefix])
+    expected_tag = version_prefix + '8.5.4'
+    self.configure_git_repo_mock(branch_name=branch_name, tag_found=True, latest_tag=version_prefix + '8.5.3')
+    result = git_bump_version.main(['--version_prefix', version_prefix, '--branch_regex', branch_regex])
     self.verify_expected_tag(expected_tag)
     assert result is 0, 'return code should have been 0'
