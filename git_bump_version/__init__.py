@@ -64,13 +64,12 @@ class GitRepository:
     self._repo.git.push([remote, tag])
 
 def get_major_minor_from_branch(repo, regex):
-  match = re.search(regex, repo.branch_name)
-
-  if len(match.groups()) != 2:
+  try:
+    match = re.search(regex, repo.branch_name)
+    major, minor = int(match.group('major')), int(match.group('minor'))
+    return True, major, minor
+  except:
     return False, None, None
-
-  major, minor = int(match.group('major')), int(match.group('minor'))
-  return True, major, minor
 
 def increment_build_number(prefix, version):
   version = version.replace(prefix, "")
@@ -93,7 +92,7 @@ def main(args=None):
 
   #For testing args is passed in, but when installing this as a package
   #the generated code does not pass it args so it will be None
-  if args:
+  if args is not None:
     args = parser.parse_args(args)
   else:
     args = parser.parse_args()
@@ -111,8 +110,7 @@ def main(args=None):
   matched, major, minor = get_major_minor_from_branch(repo, args.branch_regex)
 
   if not matched:
-    #todo test this
-    print_error('Could not parse major and minor from branch: {}'.format(repo.branch_name))
+    print_error('Could not parse major and minor from branch: {} using regex: {}'.format(repo.branch_name, args.branch_regex))
     return errno.EINVAL
 
   match = "{}{}.{}.*".format(args.version_prefix, major, minor)

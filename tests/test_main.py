@@ -103,6 +103,12 @@ class TestMain():
     assert result is errno.EEXIST, 'return code should have been EEXIST'
     self.verify_error()
 
+  def test_invalid_branch_name(self):
+    self.configure_git_repo_mock(branch_name='master')
+    result = git_bump_version.main([])
+    assert result is errno.EINVAL, 'return code should have been EINVAL'
+    self.verify_error()
+
   def test_bump_version_defaults(self):
     branch_name, latest_tag, expected_tag, _ = self.gen_random_parameters()
     self.configure_git_repo_mock(branch_name=branch_name, tag_found=True, latest_tag=latest_tag)
