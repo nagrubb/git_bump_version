@@ -85,12 +85,19 @@ def add_git_tag(repo, tag):
 def print_error(error):
   six.print_(error, file=sys.stderr)
 
-def main(args):
+def main(args=None):
   parser = argparse.ArgumentParser(prog='git_bump_version', description='Automatically add new version tag to git based on branch and last tag.')
   parser.add_argument('-bp', '--branch_regex', default='(?P<major>\d+)\.(?P<minor>\d+)$', help='Regex to match major and minor versions from branch')
   parser.add_argument('-vp', '--version_prefix', default='', help='Version prefix (i.e. "v" would make "1.0.0" into "v1.0.0")')
   parser.add_argument('-dt', '--dont_tag', action='store_true', help='Do not actually tag the repository')
-  args = parser.parse_args(args)
+
+  #For testing args is passed in, but when installing this as a package
+  #the generated code does not pass it args so it will be None
+  if args:
+    args = parser.parse_args(args)
+  else:
+    args = parser.parse_args()
+
   repo = GitRepository(os.getcwd())
 
   if not repo.valid:
@@ -123,4 +130,5 @@ def main(args):
   return 0
 
 if __name__ == "__main__":
+  print('here')
   sys.exit(main(sys.argv[1:]))

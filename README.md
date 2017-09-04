@@ -21,7 +21,7 @@ While currently on release/1.0 with the latest tag being `1.0.2` as seen above. 
 
 ## Install
 Installs like a regular PyPI package.
-- Simply run in your cloned directory: `python setup.py` OR
+- Simply run in your cloned directory: `python setup.py install` OR
 - Grab the latest version from the public PyPI: `pip install git-bump-version`
 
 ## Develop
