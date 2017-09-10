@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 render_template() {
+  echo "\"\"\""
+  echo "Module setup"
+  echo "\"\"\""
   eval "echo \"$(cat $1)\""
 }
 
@@ -19,6 +22,6 @@ git add setup.py
 git commit -m "Update setup.py for ${version}"
 git push -u origin
 git_bump_version
-python setup.py sdist 
+python setup.py sdist
 twine upload dist/git_bump_version-${version}.tar.gz
 exit 0
