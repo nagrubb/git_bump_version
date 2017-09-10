@@ -1,20 +1,20 @@
 from distutils.core import setup
 setup(
-  name = '${package_name}',
-  packages = ['${package_name}'], # this must be the same as the name above
-  version = '${version}',
-  description = 'Automatically bumps version based on last tag and current branch',
-  author = 'Nathan Grubb',
-  author_email = 'mrnathangrubb@gmail.com',
-  url = '${repo}',
-  download_url = '${repo}/archive/${version}.tar.gz',
-  keywords = ['git', 'tag', 'version'],
-  classifiers = [],
-  entry_points={
-    'console_scripts' : [
-      '${package_name} = ${package_name}.__init__:main'
-    ]},
-  install_requires=[
-    'GitPython',
-  ],
+    name = '${package_name}',
+    packages = ['${package_name}'], # this must be the same as the name above
+    version = '${version}',
+    description = 'Automatically bumps version based on last tag and current branch',
+    author = 'Nathan Grubb',
+    author_email = 'mrnathangrubb@gmail.com',
+    url = '${repo}',
+    download_url = '${repo}/archive/${version}.tar.gz',
+    keywords = ['git', 'tag', 'version'],
+    classifiers = [],
+    entry_points={
+        'console_scripts' : [
+            '${package_name} = ${package_name}.__init__:main'
+        ]},
+    install_requires=[
+        'GitPython',
+    ],
 )
