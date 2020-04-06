@@ -63,14 +63,6 @@ class GitRepository:
   def create_remote_tag(self, tag, remote="origin"):
     self._repo.git.push([remote, tag])
 
-def get_major_minor_from_branch(repo, regex):
-  try:
-    match = re.search(regex, repo.branch_name)
-    major, minor = int(match.group('major')), int(match.group('minor'))
-    return True, major, minor
-  except:
-    return False, None, None
-
 def increment_build_number(prefix, version):
   version = version.replace(prefix, "")
   major, minor, build = version.split('.')
@@ -85,8 +77,9 @@ def print_error(error):
   six.print_(error, file=sys.stderr)
 
 def main(args=None):
-  parser = argparse.ArgumentParser(prog='git_bump_version', description='Automatically add new version tag to git based on branch and last tag.')
-  parser.add_argument('-bp', '--branch_regex', default='(?P<major>\d+)\.(?P<minor>\d+)$', help='Regex to match major and minor versions from branch')
+  parser = argparse.ArgumentParser(prog='git_bump_version', description='Automatically add new version tag to git given major & minor version')
+  parser.add_argument('-mj', '--major', required=True)
+  parser.add_argument('-mn', '--minor', required=True)
   parser.add_argument('-vp', '--version_prefix', default='', help='Version prefix (i.e. "v" would make "1.0.0" into "v1.0.0")')
   parser.add_argument('-dt', '--dont_tag', action='store_true', help='Do not actually tag the repository')
 
@@ -107,13 +100,7 @@ def main(args=None):
     print_error('Head already tagged!')
     return errno.EEXIST
 
-  matched, major, minor = get_major_minor_from_branch(repo, args.branch_regex)
-
-  if not matched:
-    print_error('Could not parse major and minor from branch: {} using regex: {}'.format(repo.branch_name, args.branch_regex))
-    return errno.EINVAL
-
-  match = "{}{}.{}.*".format(args.version_prefix, major, minor)
+  match = "{}{}.{}.*".format(args.version_prefix, args.major, args.minor)
   found, new_version = repo.find_tag(match)
 
   if found:
@@ -128,5 +115,4 @@ def main(args=None):
   return 0
 
 if __name__ == "__main__":
-  print('here')
   sys.exit(main(sys.argv[1:]))
