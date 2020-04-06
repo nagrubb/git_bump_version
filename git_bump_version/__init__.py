@@ -90,6 +90,8 @@ def main(args=None):
   else:
     args = parser.parse_args()
 
+  major = args.major
+  minor = args.minor
   repo = GitRepository(os.getcwd())
 
   if not repo.valid:
@@ -100,7 +102,7 @@ def main(args=None):
     print_error('Head already tagged!')
     return errno.EEXIST
 
-  match = "{}{}.{}.*".format(args.version_prefix, args.major, args.minor)
+  match = "{}{}.{}.*".format(args.version_prefix, major, minor)
   found, new_version = repo.find_tag(match)
 
   if found:
