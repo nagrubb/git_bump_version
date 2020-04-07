@@ -129,23 +129,6 @@ class GitRepository(object):
         self._repo.git.push([remote, tag])
 
 
-def get_major_minor_from_branch(repo, regex):
-    """
-    Retrieves major and minor version from branch name
-
-    :param repo: GitRepository to fetch the branch name from
-    :param regex: regex to apply with named groups major and minor
-    :rtype: (bool, int, int)
-    :returns: (True, major, minor) if parsed successfully
-    """
-    try:
-        match = re.search(regex, repo.branch_name)
-        major, minor = int(match.group('major')), int(match.group('minor'))
-        return True, major, minor
-    except AttributeError:
-        return False, None, None
-
-
 def increment_build_number(prefix, version):
     """
     Increment build number given a version string
@@ -177,20 +160,13 @@ def main(args=None):
 
     :param args: command line arguments
     """
-    parser = argparse.ArgumentParser(
-        prog='git_bump_version',
-        description='Automatically add new version tag to git based on branch and last tag.')
-    parser.add_argument(
-        '-bp', '--branch_regex',
-        default=r'(?P<major>\d+)\.(?P<minor>\d+)$',
-        help='Regex to match major and minor versions from branch')
-    parser.add_argument(
-        '-vp', '--version_prefix',
-        default='',
+    parser = argparse.ArgumentParser(prog='git_bump_version',
+        description='Automatically add new version tag to git based on major, minor and last tag.')
+    parser.add_argument('-mj', '--major', required=True)
+    parser.add_argument('-mn', '--minor', required=True)
+    parser.add_argument('-vp', '--version_prefix', default='',
         help='Version prefix (i.e. "v" would make "1.0.0" into "v1.0.0")')
-    parser.add_argument(
-        '-dt', '--dont_tag',
-        action='store_true',
+    parser.add_argument('-dt', '--dont_tag',action='store_true',
         help='Do not actually tag the repository')
 
     # 'For testing args is passed in, but when installing this as a package
@@ -210,15 +186,8 @@ def main(args=None):
         print('Head already tagged!', file=sys.stderr)
         return errno.EEXIST
 
-    matched, major, minor = get_major_minor_from_branch(repo, args.branch_regex)
-
-    if not matched:
-
-        print(
-            'Could not parse major and minor from branch: "{}" using \
-            regex: "{}"'.format(repo.branch_name, args.branch_regex),
-            file=sys.stderr)
-        return errno.EINVAL
+    major = args.major
+    minor = args.minor
 
     match = "{}{}.{}.*".format(args.version_prefix, major, minor)
     found, latest_version = repo.find_tag(match)
